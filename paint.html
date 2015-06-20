@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MS Paint v1.0</title>
+	<script src="D:\\js\\jquery-1.11.0.min.js"></script>
+</head>
+	<body class="main">
+		<div id="pivot"></div>
+		<div class="color_pallet">
+		<div class="pencil_pallet">
+			<table>
+				<tr>
+					<td onmouseover="changePencile('1');">1</td>
+					<td onmouseover="changePencile('2');">2</td>
+				</tr>
+				<tr>
+					<td onmouseover="changePencile('3');">3</td>
+					<td onmouseover="changePencile('4');">4</td>
+				</tr>
+				<tr>
+					<td onmouseover="changePencile('5');">5</td>
+					<td onmouseover="changePencile('6');">6</td>
+				</tr>
+			</table>
+		</div>
+		<div class="tools">
+			<table>
+				<tr>
+					<td onclick="fnSelRubber();">Rubber</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript">
+
+		/**********************************************
+		*
+		*	Author 			: 	Rohan Philip Lopes
+		* 	Version 		: 	0.1
+		*	Date Modified	: 	20th Jun 2015
+		*
+		**********************************************/
+			var zindex = 10; //intial layer value
+			var color = "red";
+			var thick = 1;
+			var chColor = "";
+			var rubber = "";
+			var rubberFlag = false;
+			var data = "<div class=\"cloud\">";
+				data += "</div>";
+			var tableData = "<table>";
+
+				$(document).ready( function () {
+					main();
+					for (var i = 0; i < 10; i++) {
+						tableData += "<tr data-id=\""+ i +"\">";
+						for (var j = 0; j < 2; j++) {
+							chColor = getRandomColor();
+							tableData += "<td onmouseover=\"changeColor('"+chColor+"')\" style=\"background-color:"+chColor+"\">";
+							tableData += "</td>"
+						}
+						tableData += "</tr>";
+					};
+					tableData += "</table>";
+					$('.color_pallet').append(tableData);
+					rubber += "<span class=\"rubber\"></span>";
+					$('body').append(rubber);
+				});
+
+				function main () {
+					try {
+						$("#pivot").html(data);
+					} catch (e) {
+						console.error(e);
+					}
+				}
+
+				function changeColor (strColor) {
+					try {
+						//console.log(strColor);
+						color = strColor;
+						rubberFlag= false;
+					} catch (e) {
+						console.error(e);
+					}
+				}
+				function getRandomColor () {
+					try {
+					    var letters = '0123456789ABCDEF'.split('');
+					    var color = '#';
+
+					    for (var i = 0; i < 6; i++ ) {
+					        color += letters[Math.floor(Math.random() * 16)];
+					    }
+					    
+					    return color;
+					} catch (e) {
+						console.error(e);
+					}
+				}
+				function changePencile (thickness) {
+					try {
+						thick = thickness;
+					} catch (e) {
+						console.error(e);
+					}
+				}
+				function fnSelRubber () {
+					try {
+						rubberFlag = true;
+						$('.rubber').show();
+						$(window).mousemove( function(event) {
+							console.log(event);
+							$('.rubber').css({ 
+											top : event.pageY,
+		  									left: event.pageX,
+		  									width :'25px',
+		  									height:'25px',
+		  									border:'1px solid red',
+		  									position: 'fixed'
+		  								});
+							randNumber = Math.floor(Math.random()*1000);
+							zindex++;
+
+							$('body').append('<span class="white ' + randNumber + '"></span>');
+							$('.white + .' + randNumber).css({ 
+											top : event.pageY,
+		  									left: event.pageX,
+		  									width :'25px',
+		  									height:'25px',
+		  									position: 'fixed',
+		  									'background-color':'white',
+		  									'z-index': zindex
+										});
+						});
+					} catch (e) {
+						console.error(e);
+					}
+				}
+
+				$(document).mousedown(function() {
+			        $(window).mousemove(function() {
+
+			        	zindex++;
+			        	
+			        	if(rubberFlag == false) {
+			        		$('.rubber').hide(); 
+			        	}
+
+			            //isDragging = true;
+			            //$(window).unbind("mousemove");
+			        	//console.log('isDragging');
+			        	$(".cloud").css({ top : event.pageY,
+	  								  left: event.pageX
+	  								 });
+	  					$('.cloud').append('<span class=\"pointer ' + thick + ' color_' + color.split('#')[1] + '\" style=\"top:'+event.pageY+'px;left:'+event.pageX+'px\"></span>');
+	  					$('.color_'+ color.split('#')[1] + "+ ." + thick).css({'background-color': color,
+	  															'z-index': zindex,
+	  															height: thick*3 +'px',
+																width: thick*3 +'px'
+	  														});
+	  					/*$('.color_'+ color.split('#')[1] + "+ ." + thick).css({
+							height: thick*3 +'px',
+							width: thick*3 +'px'
+						});*/
+			        });
+			    })
+			    .mouseup(function() {
+			        //var wasDragging = isDragging;
+			        //isDragging = false;
+			        $(window).unbind("mousemove");
+			        /*if (!wasDragging) {
+			           //console.log('not isDragging');
+			        }*/
+			    });
+		</script>
+		<style type="text/css">
+			.color_pallet > table
+			{
+				width: 50px;
+				height: 300px;
+				border:1px solid black;
+			}
+			.color_pallet > td
+			{
+				width: 5px;
+				height: 5px;
+				z-index: 999999;
+				border:1px solid black;
+			}
+			.color_pallet > tr
+			{
+				z-index: 999;
+			}
+			.cloud {
+				border:1px solid red;
+				border-radius: 25px;
+				width: 5px;
+				height: 5px;
+				cursor: pointer;
+				position: absolute;
+			}
+			body {
+				height: 500px;
+				width: 500px ;
+			}
+			.pointer {
+				height:5px;
+				width:5px;
+				position:fixed;
+				z-index: -9;
+				border-radius: 50%;
+			}
+			.pencil_pallet
+			{
+				position: fixed;
+				right: 10px;
+				top: 20px;
+				z-index: 9999;
+			}
+			.tools
+			{
+				position: fixed;
+				top: 300px;
+				right: 10px;
+				z-index: 999999;
+			}
+		</style>
+	</body>
+</html>
